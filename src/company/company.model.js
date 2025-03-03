@@ -45,4 +45,3 @@ CompanySchema.methods.toJSON = function () {
 };
 
 export default model('Company', CompanySchema);
-adasdasdasd
