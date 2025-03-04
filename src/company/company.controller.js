@@ -1,6 +1,9 @@
 import { response } from "express";
 import Company from "./company.model.js";
 import exceljs from "exceljs";
+import path from "path";
+import fs from "fs";
+import { createRequire } from "module";
 
 export const getCompanies = async (req, res = response) => {
     try {
@@ -64,7 +67,7 @@ export const updateCompany = async (req, res = response) => {
 
         const updatedCompany = await Company.findByIdAndUpdate(
             id,
-            { name, impactLevel, yearsOfExperience, category },
+            { name, impactLevel, yearsOfExperience, category }, // Ahora también actualiza `category`
             { new: true }
         );
 
@@ -89,6 +92,9 @@ export const updateCompany = async (req, res = response) => {
         });
     }
 };
+
+const require = createRequire(import.meta.url);
+const __dirname = path.dirname(require.resolve("../company/company.controller.js"));
 
 export const generateCompaniesReport = async (req, res = response) => {
     try {
@@ -117,13 +123,26 @@ export const generateCompaniesReport = async (req, res = response) => {
             worksheet.addRow(company.toObject());
         });
 
-        const fileName = "Companies_Report.xlsx";
+        // Definir la carpeta y ruta del archivo
+        const reportsDir = path.join(__dirname, "../../reports");
+        const filePath = path.join(reportsDir, "Companies_Report.xlsx");
 
-        res.setHeader("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-        res.setHeader("Content-Disposition", `attachment; filename=${fileName}`);
+        // Crear la carpeta "reports" si no existe
+        if (!fs.existsSync(reportsDir)) {
+            fs.mkdirSync(reportsDir, { recursive: true });
+        }
 
-        const buffer = await workbook.xlsx.writeBuffer();
-        res.send(Buffer.from(buffer));
+        // Guardar el archivo en el servidor
+        await workbook.xlsx.writeFile(filePath);
+
+        // Configurar la respuesta para descargar el archivo
+        res.download(filePath, "Companies_Report.xlsx", (err) => {
+            if (err) {
+                console.error("Error downloading file:", err);
+                res.status(500).json({ success: false, msg: "Error downloading report" });
+            }
+        });
+
     } catch (error) {
         console.error("Error generating report", error);
         res.status(500).json({

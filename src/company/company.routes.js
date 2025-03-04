@@ -29,7 +29,7 @@ router.put(
         check("name", "Company name is required").optional().not().isEmpty(),
         check("impactLevel", "Impact Level is required").optional().not().isEmpty(),
         check("yearsOfExperience", "Years of Experience must be a number").optional().isNumeric(),
-        check("category", "Category is required").optional().not().isEmpty(),
+        check("category", "Category is required").not().isEmpty(), 
         validarCampos
     ],
     updateCompany
