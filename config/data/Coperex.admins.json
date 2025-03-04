@@ -1,0 +1,17 @@
+[{
+  "_id": {
+    "$oid": "67c5da627b5d7225ef6bde10"
+  },
+  "name": "Admin",
+  "surname": "User",
+  "username": "admin",
+  "email": "admin@example.com",
+  "password": "$2a$10$hltQNiVF6nZdYYx8Bd4hvOO9pzTuy7ofaCXuIaj5b0RFZ3ajlptG6",
+  "estado": true,
+  "createdAt": {
+    "$date": "2025-03-03T16:35:46.812Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-03T16:35:46.812Z"
+  }
+}]
